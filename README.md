@@ -1,6 +1,6 @@
 # Forked and customized form Pang Wei Koh
 
-This repo is what I used for my undergraduate thesis. I changed many of the codes to adapt to my research scenerio. Meanwhile, other codes are added to my new experiments. 
+This repo is what I used for my undergraduate thesis (School of Management, Zhejiang University). I changed many of the codes to adapt to my research scenerio. Meanwhile, other codes are added to my new experiments. 
 
 The dataset comes from ILSVRC2012 image dataset. 1300 from class 'airliner' as 'airplane' (n02690373), 1300 from class 'taxi' (n02930766), 'jeep' (n03594945), 'racer' (n04037443), 'sports car' (n04285008), 'wagon' (n02814533) as 'car', random 260 each.
 
