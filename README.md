@@ -5,6 +5,7 @@ This repo is what I used for my undergraduate thesis (School of Management, Zhej
 The dataset comes from ILSVRC2012 image dataset. 1300 from class 'airliner' as 'airplane' (n02690373), 1300 from class 'taxi' (n02930766), 'jeep' (n03594945), 'racer' (n04037443), 'sports car' (n04285008), 'wagon' (n02814533) as 'car', random 260 each.
 
 Dependencies:
+- python 3.5.6
 - cudnn 7.3.1 
 - tensorflow-gpu 1.10.0 
 - h5py 2.8.0 
@@ -15,6 +16,8 @@ Dependencies:
 - pandas 0.23.4 
 - scikit-learn 0.20.0 
 - scipy 1.1.0
+- pillow 5.2.0
+- openpyxl 2.6.1
 
 # The following is the original README.MD from Pang Wei Koh
 
