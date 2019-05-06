@@ -2,6 +2,8 @@ import IPython
 import numpy as np
 
 import os
+import sys
+sys.path.append("D:/influence-release-master")  #设置自定义包的搜索路径
 
 import influence.experiments as experiments
 from influence.inceptionModel import BinaryInceptionModel
@@ -14,7 +16,7 @@ from load_animals import load_animals, load_dogfish_with_koda
 img_side = 299
 num_channels = 3
  
-batch_size = 100
+batch_size = 25 #TODO: 因为报错ResourceExhaustedError所以减小试试
 initial_learning_rate = 0.001 
 keep_probs = None
 decay_epochs = [1000, 10000]
@@ -37,6 +39,7 @@ data_sets = load_dogfish_with_koda()
 model_name = '%s_inception' % dataset_name
 
 num_classes = 2
+
 model = BinaryInceptionModel(
     img_side=img_side,
     num_channels=num_channels,
@@ -48,10 +51,9 @@ model = BinaryInceptionModel(
     keep_probs=keep_probs,
     decay_epochs=decay_epochs,
     mini_batch=True,
-    train_dir='output',
-    log_dir='log',
+    train_dir='G:/output',
+    log_dir='G:/log',
     model_name=dataset_name)
-
 
 data_sets.train.reset_batch()
 data_sets.test.reset_batch()
@@ -65,20 +67,20 @@ for data_set, label in [
 
     num_examples = data_set.num_examples
     if num_examples > 100:
-        batch_size = 100
+        batch_size = 25 #TODO: 因为报错ResourceExhaustedError所以减小试试
     else:
         batch_size = num_examples
     
     assert num_examples % batch_size == 0
-    num_iter = int(num_examples / batch_size)
+    num_iter = int(num_examples / batch_size) #循环次数
 
     inception_features_val = []
-    for i in xrange(num_iter):
+    for i in range(num_iter):
         feed_dict = model.fill_feed_dict_with_batch(data_set, batch_size=batch_size)
         inception_features_val_temp = model.sess.run(model.inception_features, feed_dict=feed_dict)
         inception_features_val.append(inception_features_val_temp)
 
     np.savez(
-        'data/%s_features_new_%s.npz' % (model_name, label), 
+        'G:/data/%s_features_new_%s.npz' % (model_name, label), 
         inception_features_val=np.concatenate(inception_features_val),
         labels=data_set.labels)

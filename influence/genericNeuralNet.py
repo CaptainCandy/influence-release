@@ -17,7 +17,6 @@ from scipy.optimize import fmin_ncg
 
 import os.path
 import time
-from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 from tensorflow.python.ops import array_ops
 from keras import backend as K
@@ -85,7 +84,7 @@ class GenericNeuralNet(object):
         self.batch_size = kwargs.pop('batch_size')
         self.data_sets = kwargs.pop('data_sets')
         self.train_dir = kwargs.pop('train_dir', 'output')
-        log_dir = kwargs.pop('log_dir', 'log')
+        self.log_dir = kwargs.pop('log_dir', 'log')
         self.model_name = kwargs.pop('model_name')
         self.num_classes = kwargs.pop('num_classes')
         self.initial_learning_rate = kwargs.pop('initial_learning_rate')        
@@ -269,7 +268,7 @@ class GenericNeuralNet(object):
         self.reset_datasets()
 
         ret = []
-        for i in xrange(num_iter):
+        for i in range(num_iter):
             feed_dict = self.fill_feed_dict_with_batch(data_set)
             ret_temp = self.sess.run(ops, feed_dict=feed_dict)
             
@@ -323,7 +322,7 @@ class GenericNeuralNet(object):
 
 
     def retrain(self, num_steps, feed_dict):        
-        for step in xrange(num_steps):   
+        for step in range(num_steps):   
             self.sess.run(self.train_op, feed_dict=feed_dict)
 
 
@@ -356,7 +355,7 @@ class GenericNeuralNet(object):
 
         sess = self.sess            
 
-        for step in xrange(num_steps):
+        for step in range(num_steps):
             self.update_learning_rate(step)
 
             start_time = time.time()
@@ -381,7 +380,7 @@ class GenericNeuralNet(object):
                     print('Step %d: loss = %.8f (%.3f sec)' % (step, loss_val, duration))
 
             # Save a checkpoint and evaluate the model periodically.
-            if (step + 1) % 100000 == 0 or (step + 1) == num_steps:
+            if (step + 1) % 100 == 0 or (step + 1) == num_steps:
                 if save_checkpoints: self.saver.save(sess, self.checkpoint_file, global_step=step)
                 if verbose: self.print_model_eval()
 
@@ -526,7 +525,7 @@ class GenericNeuralNet(object):
 
         self.reset_datasets()
         hessian_vector_val = None
-        for i in xrange(num_iter):
+        for i in range(num_iter):
             feed_dict = self.fill_feed_dict_with_batch(self.data_sets.train, batch_size=batch_size)
             # Can optimize this
             feed_dict = self.update_feed_dict_with_v_placeholder(feed_dict, v)
@@ -614,7 +613,7 @@ class GenericNeuralNet(object):
         elif loss_type == 'adversarial_loss':
             op = self.grad_adversarial_loss_op
         else:
-            raise ValueError, 'Loss must be specified'
+            raise ValueError('Loss must be specified')
 
         if test_indices is not None:
             num_iter = int(np.ceil(len(test_indices) / batch_size))
@@ -650,10 +649,10 @@ class GenericNeuralNet(object):
         # because mini-batching permutes dataset order
 
         if train_idx is None: 
-            if (X is None) or (Y is None): raise ValueError, 'X and Y must be specified if using phantom points.'
-            if X.shape[0] != len(Y): raise ValueError, 'X and Y must have the same length.'
+            if (X is None) or (Y is None): raise ValueError('X and Y must be specified if using phantom points.')
+            if X.shape[0] != len(Y): raise ValueError('X and Y must have the same length.')
         else:
-            if (X is not None) or (Y is not None): raise ValueError, 'X and Y cannot be specified if train_idx is specified.'
+            if (X is not None) or (Y is not None): raise ValueError('X and Y cannot be specified if train_idx is specified.')
 
         test_grad_loss_no_reg_val = self.get_test_grad_loss_no_reg_val(test_indices, loss_type=loss_type)
 

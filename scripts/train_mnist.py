@@ -48,8 +48,8 @@ model = All_CNN_C(
     damping=1e-2,
     decay_epochs=decay_epochs,
     mini_batch=True,
-    train_dir='output', 
-    log_dir='log',
+    train_dir='G:/output', 
+    log_dir='G:/log',
     model_name='mnist_small_all_cnn_c')
 
 num_steps = 500000
@@ -71,7 +71,7 @@ actual_loss_diffs, predicted_loss_diffs, indices_to_remove = experiments.test_re
     force_refresh=True)
 
 np.savez(
-    'output/mnist_small_all_cnn_c_iter-500k_retraining-100.npz', 
+    'G:/output/mnist_small_all_cnn_c_iter-500k_retraining-100.npz', 
     actual_loss_diffs=actual_loss_diffs, 
     predicted_loss_diffs=predicted_loss_diffs, 
     indices_to_remove=indices_to_remove

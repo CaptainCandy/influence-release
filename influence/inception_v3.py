@@ -32,7 +32,7 @@ from keras.utils.layer_utils import convert_all_kernels_in_model
 from keras.utils.data_utils import get_file
 from keras import backend as K
 from keras.applications.imagenet_utils import decode_predictions
-from keras.applications.imagenet_utils import _obtain_input_shape
+from keras_applications.imagenet_utils import _obtain_input_shape
 from keras.preprocessing import image
 
 
@@ -83,7 +83,7 @@ def conv2d_bn(x,
     x = Activation('relu', name=name)(x)
     return x
 
-
+# 尝试从这里修改weights成None试试看
 def InceptionV3(include_top=True,
                 weights='imagenet',
                 input_tensor=None,
@@ -154,7 +154,7 @@ def InceptionV3(include_top=True,
         default_size=299,
         min_size=139,
         data_format=K.image_data_format(),
-        include_top=include_top)
+        require_flatten=include_top)
 
     if input_tensor is None:
         img_input = Input(shape=input_shape)
@@ -371,11 +371,15 @@ def InceptionV3(include_top=True,
                               'your Keras config '
                               'at ~/.keras/keras.json.')
         if include_top:
-            weights_path = get_file(
-                'inception_v3_weights_tf_dim_ordering_tf_kernels.h5',
-                WEIGHTS_PATH,
-                cache_subdir='models',
-                md5_hash='9a0d58056eeedaa3f26cb7ebd46da564')
+# =============================================================================
+#             weights_path = get_file(
+#                 'inception_v3_weights_tf_dim_ordering_tf_kernels.h5',
+#                 WEIGHTS_PATH,
+#                 cache_subdir='models',
+#                 md5_hash='9a0d58056eeedaa3f26cb7ebd46da564')
+# =============================================================================
+            print('Loading inception pre-trained weights with top...')
+            weights_path = 'C:/Tang/influence-release-master/inception/inception_v3_weights_tf_dim_ordering_tf_kernels.h5'
         else:
             # Replace this with a local copy for reproducibility
             # weights_path = get_file(
@@ -383,11 +387,13 @@ def InceptionV3(include_top=True,
             #     WEIGHTS_PATH_NO_TOP,
             #     cache_subdir='models',
             #     md5_hash='bcbd6486424b2319ff4ef7d526e38f63')
-            weights_path = 'inception/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5'
-
+            print('Loading inception pre-trained weights with no top...')
+            weights_path = 'C:/Tang/influence-release-master/inception/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5'
+            
         model.load_weights(weights_path)
         if K.backend() == 'theano':
             convert_all_kernels_in_model(model)
+            
     return model
 
 
@@ -401,7 +407,7 @@ def preprocess_input(x):
 if __name__ == '__main__':
     model = InceptionV3(include_top=True, weights='imagenet')
 
-    img_path = 'elephant.jpg'
+    img_path = 'G:/ZJU/Thesis/codes/data/ILSVRC2012_img_test/ILSVRC2012_test_00000003.JPEG'
     img = image.load_img(img_path, target_size=(299, 299))
     x = image.img_to_array(img)
     x = np.expand_dims(x, axis=0)

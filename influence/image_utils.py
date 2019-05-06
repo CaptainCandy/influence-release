@@ -11,7 +11,7 @@ from keras.utils import np_utils
 from keras import backend as K
 
 
-sns.set(color_codes=True)
+sns.set(color_codes=True) #设定seaborn画图的参数
 
 def plot_flat_bwimage(X, y=None, pos_class=1, neg_class=-1, side=28):
     X = np.reshape(X, (side, side))

@@ -81,7 +81,7 @@ model = SmoothHinge(
     keep_probs=keep_probs,
     decay_epochs=decay_epochs,
     mini_batch=False,
-    train_dir='output',
+    train_dir='G:/output',
     log_dir='log',
     model_name='smooth_hinge_17_t-%s' % temp)
 
@@ -121,7 +121,7 @@ for counter, temp in enumerate(temps):
         keep_probs=keep_probs,
         decay_epochs=decay_epochs,
         mini_batch=False,
-        train_dir='output',
+        train_dir='G:/output',
         log_dir='log',
         model_name='smooth_hinge_17_t-%s' % temp)
   
@@ -154,7 +154,7 @@ for counter, temp in enumerate(temps):
             num_to_remove=num_to_remove)
 
 np.savez(
-    'output/hinge_results', 
+    'G:/output/hinge_results', 
     temps=temps,
     indices_to_remove=indices_to_remove,
     actual_loss_diffs=actual_loss_diffs,

@@ -41,8 +41,8 @@ tf_model = LogisticRegressionWithLBFGS(
     keep_probs=keep_probs,
     decay_epochs=decay_epochs,
     mini_batch=False,
-    train_dir='output',
-    log_dir='log',
+    train_dir='G:/output',
+    log_dir='G:/log',
     model_name='mnist_logreg_lbfgs')
 
 tf_model.train()
@@ -69,7 +69,7 @@ predicted_loss_diffs_lissa = tf_model.get_influence_on_test_loss(
 )
 
 np.savez(
-    'output/mnist_logreg_lbfgs_retraining-500.npz', 
+    'G:/output/mnist_logreg_lbfgs_retraining-500.npz', 
     actual_loss_diffs=actual_loss_diffs, 
     predicted_loss_diffs_cg=predicted_loss_diffs_cg,
     predicted_loss_diffs_lissa=predicted_loss_diffs_lissa,

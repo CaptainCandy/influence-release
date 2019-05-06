@@ -14,6 +14,9 @@ import scipy.linalg as slin
 import scipy.sparse.linalg as sparselin
 import scipy.sparse as sparse
 
+import sys
+sys.path.append("C:/Tang/influence-release-master")  #设置自定义包的搜索路径
+
 from load_animals import load_animals
 
 import tensorflow as tf
@@ -28,7 +31,7 @@ import influence.dataset as dataset
 from influence.dataset import DataSet
 from influence.dataset_poisoning import generate_inception_features
 
-
+#%%
 
 def get_Y_pred_correct_inception(model):
     Y_test = model.data_sets.test.labels
@@ -40,7 +43,6 @@ def get_Y_pred_correct_inception(model):
         Y_pred_correct[idx] = Y_pred[idx, int(label)]
     return Y_pred_correct
 
-
 num_classes = 2
 num_train_ex_per_class = 900
 num_test_ex_per_class = 300
@@ -51,6 +53,7 @@ image_data_sets = load_animals(
     num_test_ex_per_class=num_test_ex_per_class,
     classes=['dog', 'fish'])
 
+#%%
 ### Generate kernelized feature vectors
 X_train = image_data_sets.train.x
 X_test = image_data_sets.test.x
@@ -72,9 +75,14 @@ L = slin.cholesky(K, lower=True)
 L_train = L[:num_train, :num_train]
 L_test = L[num_train:, :num_train]
 
+# =============================================================================
+# K_train = K[:num_train, :num_train]
+# K_test = K[num_train:, :num_train]
+# =============================================================================
+
 ### Compare top 5 influential examples from each network
 
-test_idx = 462
+#test_idx = 0 # 原来是462
 
 ## RBF
 
@@ -139,12 +147,14 @@ params_feed_dict = {}
 params_feed_dict[rbf_model.W_placeholder] = hinge_W
 rbf_model.sess.run(rbf_model.set_params_op, feed_dict=params_feed_dict)
 
-rbf_predicted_loss_diffs = rbf_model.get_influence_on_test_loss(
-    [test_idx], 
-    np.arange(len(rbf_model.data_sets.train.labels)),
-    force_refresh=True)
+# =============================================================================
+# rbf_predicted_loss_diffs = rbf_model.get_influence_on_test_loss(
+#     [test_idx], 
+#     np.arange(len(rbf_model.data_sets.train.labels)),
+#     force_refresh=True)
+# =============================================================================
 
-
+#%%
 ## Inception
 
 dataset_name = 'dogfish_900_300'
@@ -154,7 +164,7 @@ img_side = 299
 num_channels = 3
 num_train_ex_per_class = 900
 num_test_ex_per_class = 300
-batch_size = 100
+batch_size = 100 #TODO: 需要根据设备修改的
 
 
 tf.reset_default_graph()
@@ -192,18 +202,18 @@ test = DataSet(
     test_inception_features_val,
     image_data_sets.test.labels)
 
-# train_f = np.load('output/%s_inception_features_new_train.npz' % dataset_name)
+# train_f = np.load('G:/output/%s_inception_features_new_train.npz' % dataset_name)
 # train = DataSet(train_f['inception_features_val'], train_f['labels'])
-# test_f = np.load('output/%s_inception_features_new_test.npz' % dataset_name)
+# test_f = np.load('G:/output/%s_inception_features_new_test.npz' % dataset_name)
 # test = DataSet(test_f['inception_features_val'], test_f['labels'])
 
 validation = None
 
 data_sets = base.Datasets(train=train, validation=validation, test=test)
 
-# train_f = np.load('output/%s_inception_features_new_train.npz' % dataset_name)
+# train_f = np.load('G:/output/%s_inception_features_new_train.npz' % dataset_name)
 # train = DataSet(train_f['inception_features_val'], train_f['labels'])
-# test_f = np.load('output/%s_inception_features_new_test.npz' % dataset_name)
+# test_f = np.load('G:/output/%s_inception_features_new_test.npz' % dataset_name)
 # test = DataSet(test_f['inception_features_val'], test_f['labels'])
 # validation = None
 
@@ -237,30 +247,67 @@ inception_model = BinaryLogisticRegressionWithLBFGS(
 
 inception_model.train()
 
-inception_predicted_loss_diffs = inception_model.get_influence_on_test_loss(
-    [test_idx], 
-    np.arange(len(inception_model.data_sets.train.labels)),
-    force_refresh=True)
+# =============================================================================
+# inception_predicted_loss_diffs = inception_model.get_influence_on_test_loss(
+#     [test_idx], 
+#     np.arange(len(inception_model.data_sets.train.labels)),
+#     force_refresh=True)
+# 
+# x_test = X_test[test_idx, :]
+# y_test = Y_test[test_idx]
+# 
+# 
+# distances = dataset.find_distances(x_test, X_train)
+# flipped_idx = Y_train != y_test
+# rbf_margins_test = rbf_model.sess.run(rbf_model.margin, feed_dict=rbf_model.all_test_feed_dict)
+# rbf_margins_train = rbf_model.sess.run(rbf_model.margin, feed_dict=rbf_model.all_train_feed_dict)
+# inception_Y_pred_correct = get_Y_pred_correct_inception(inception_model)
+# =============================================================================
 
-x_test = X_test[test_idx, :]
-y_test = Y_test[test_idx]
 
+# =============================================================================
+# np.savez(
+#     'output/rbf_dogfish_results',
+#     test_idx=test_idx,
+#     distances=distances,
+#     flipped_idx=flipped_idx,
+#     rbf_margins_test=rbf_margins_test,
+#     rbf_margins_train=rbf_margins_train,
+#     inception_Y_pred_correct=inception_Y_pred_correct,
+#     rbf_predicted_loss_diffs=rbf_predicted_loss_diffs,
+#     inception_predicted_loss_diffs=inception_predicted_loss_diffs
+# )
+# =============================================================================
 
-distances = dataset.find_distances(x_test, X_train)
-flipped_idx = Y_train != y_test
-rbf_margins_test = rbf_model.sess.run(rbf_model.margin, feed_dict=rbf_model.all_test_feed_dict)
-rbf_margins_train = rbf_model.sess.run(rbf_model.margin, feed_dict=rbf_model.all_train_feed_dict)
-inception_Y_pred_correct = get_Y_pred_correct_inception(inception_model)
-
-
-np.savez(
-    'output/rbf_results', 
-    test_idx=test_idx,
-    distances=distances,
-    flipped_idx=flipped_idx,
-    rbf_margins_test=rbf_margins_test,
-    rbf_margins_train=rbf_margins_train,
-    inception_Y_pred_correct=inception_Y_pred_correct,
-    rbf_predicted_loss_diffs=rbf_predicted_loss_diffs,
-    inception_predicted_loss_diffs=inception_predicted_loss_diffs
-)
+#%%
+print('Save results...')
+for test_idx in range(256, 600):
+    rbf_predicted_loss_diffs = rbf_model.get_influence_on_test_loss(
+        [test_idx], 
+        np.arange(len(rbf_model.data_sets.train.labels)),
+        force_refresh=True)
+    inception_predicted_loss_diffs = inception_model.get_influence_on_test_loss(
+        [test_idx], 
+        np.arange(len(inception_model.data_sets.train.labels)),
+        force_refresh=True)
+    
+    x_test = X_test[test_idx, :]
+    y_test = Y_test[test_idx]
+    
+    distances = dataset.find_distances(x_test, X_train)
+    flipped_idx = Y_train != y_test
+    rbf_margins_test = rbf_model.sess.run(rbf_model.margin, feed_dict=rbf_model.all_test_feed_dict)
+    rbf_margins_train = rbf_model.sess.run(rbf_model.margin, feed_dict=rbf_model.all_train_feed_dict)
+    inception_Y_pred_correct = get_Y_pred_correct_inception(inception_model)
+    
+    np.savez(
+        'output/rbf_dogfish_results_%s' % test_idx,
+        test_idx=test_idx,
+        distances=distances,
+        flipped_idx=flipped_idx,
+        rbf_margins_test=rbf_margins_test,
+        rbf_margins_train=rbf_margins_train,
+        inception_Y_pred_correct=inception_Y_pred_correct,
+        rbf_predicted_loss_diffs=rbf_predicted_loss_diffs,
+        inception_predicted_loss_diffs=inception_predicted_loss_diffs
+    )

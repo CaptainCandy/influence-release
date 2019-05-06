@@ -72,13 +72,14 @@ def generate_inception_features(model, poisoned_X_train_subset, labels_subset, b
         batch_size = len(labels_subset)
 
     num_examples = poisoned_data_sets.train.num_examples
+    print(num_examples, batch_size)
     assert num_examples % batch_size == 0
     num_iter = int(num_examples / batch_size)
 
     poisoned_data_sets.train.reset_batch()
 
     inception_features_val = []
-    for i in xrange(num_iter):
+    for i in range(num_iter):
         feed_dict = model.fill_feed_dict_with_batch(poisoned_data_sets.train, batch_size=batch_size)
         inception_features_val_temp = model.sess.run(model.inception_features, feed_dict=feed_dict)
         inception_features_val.append(inception_features_val_temp)
@@ -135,8 +136,8 @@ def iterative_attack(top_model, full_model, top_graph, full_graph, project_fn, t
                 loss_type=loss_type)
 
         copyfile(
-            'output/%s-cg-%s-test-%s.npz' % (top_model_name, loss_type, test_description),
-            'output/%s-cg-%s-test-%s.npz' % (full_model_name, loss_type, test_description))
+            'output21/%s-cg-%s-test-%s.npz' % (top_model_name, loss_type, test_description),
+            'output21/%s-cg-%s-test-%s.npz' % (full_model_name, loss_type, test_description))
 
         # Use full model to get gradient wrt pixels
         with full_graph.as_default():
@@ -169,7 +170,7 @@ def iterative_attack(top_model, full_model, top_graph, full_graph, project_fn, t
         with top_graph.as_default():
             top_model.train()
             weights = top_model.sess.run(top_model.weights)
-            weight_path = 'output/inception_weights_%s_attack_%s_testidx-%s.npy' % (top_model_name, loss_type, test_description)
+            weight_path = 'output21/inception_weights_%s_attack_%s_testidx-%s.npy' % (top_model_name, loss_type, test_description)
             np.save(weight_path, weights)
         with full_graph.as_default():            
             full_model.load_weights_from_disk(weight_path, do_save=False, do_check=False)
@@ -192,7 +193,7 @@ def iterative_attack(top_model, full_model, top_graph, full_graph, project_fn, t
             if ((early_stop is not None) and (len(test_indices) == 1)):
                 if test_pred[0, int(full_model.data_sets.test.labels[test_indices])] < early_stop:
                     print('Successfully attacked. Saving and breaking...')
-                    np.savez('output/%s_attack_%s_testidx-%s_trainidx-%s_stepsize-%s_proj_final' % (full_model.model_name, loss_type, test_description, train_idx_str, step_size), 
+                    np.savez('output21/%s_attack_%s_testidx-%s_trainidx-%s_stepsize-%s_proj_final' % (full_model.model_name, loss_type, test_description, train_idx_str, step_size), 
                         poisoned_X_train_image=poisoned_X_train_subset, 
                         poisoned_X_train_inception_features=inception_X_train_subset,
                         Y_train=labels_subset,
@@ -203,7 +204,7 @@ def iterative_attack(top_model, full_model, top_graph, full_graph, project_fn, t
                     return True
 
         if (attack_iter+1) % save_iter == 0:
-            np.savez('output/%s_attack_%s_testidx-%s_trainidx-%s_stepsize-%s_proj_iter-%s' % (full_model.model_name, loss_type, test_description, train_idx_str, step_size, attack_iter+1), 
+            np.savez('output21/%s_attack_%s_testidx-%s_trainidx-%s_stepsize-%s_proj_iter-%s' % (full_model.model_name, loss_type, test_description, train_idx_str, step_size, attack_iter+1), 
                 poisoned_X_train_image=poisoned_X_train_subset, 
                 poisoned_X_train_inception_features=inception_X_train_subset,
                 Y_train=labels_subset,

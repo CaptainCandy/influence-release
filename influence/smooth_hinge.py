@@ -37,7 +37,7 @@ def log_loss(x, t):
 def hinge(x):
     return tf.maximum(1-x, 0)
 
-def smooth_hinge_loss(x, t):    
+def smooth_hinge_loss(x, t):
 
     # return tf.cond(
     #     tf.equal(t, 0),
@@ -252,7 +252,7 @@ class SmoothHinge(GenericNeuralNet):
             print('Using model minus one')
             model = self.svm_model_minus_one
         else:
-            raise ValueError, "feed_dict has incorrect number of training examples"
+            raise ValueError ("feed_dict has incorrect number of training examples")
 
         model.fit(X_train, Y_train)
         # sklearn returns coefficients in shape num_classes x num_features
@@ -274,7 +274,7 @@ class SmoothHinge(GenericNeuralNet):
             self.print_model_eval()
 
         # print('Starting SGD')
-        # for step in xrange(100):   
+        # for step in range(100):   
         #     self.sess.run(self.train_op, feed_dict=feed_dict)
 
         # self.print_model_eval()

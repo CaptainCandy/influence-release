@@ -47,7 +47,7 @@ tf_model = BinaryLogisticRegressionWithLBFGS(
     keep_probs=keep_probs,
     decay_epochs=decay_epochs,
     mini_batch=False,
-    train_dir='output',
+    train_dir='G:/output',
     log_dir='log',
     model_name='spam_logreg')
 
@@ -118,7 +118,7 @@ for flips_idx in range(num_flip_vals):
 
 
 np.savez(
-    'output/spam_results', 
+    'G:/output/spam_results', 
     orig_results=orig_results,
     flipped_results=flipped_results,
     fixed_influence_loo_results=fixed_influence_loo_results,

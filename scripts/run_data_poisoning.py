@@ -121,7 +121,7 @@ with top_graph.as_default():
         keep_probs=keep_probs,
         decay_epochs=decay_epochs,
         mini_batch=False,
-        train_dir='output',
+        train_dir='G:/output',
         log_dir='log',
         model_name=top_model_name)
     top_model.train()
@@ -200,7 +200,7 @@ orig_Y_train = np.copy(data_sets.train.labels)
 #     test_description = test_idx
 
 #     # If this has already been successfully attacked, skip
-#     filenames = [filename for filename in os.listdir('./output') if (
+#     filenames = [filename for filename in os.listdir('./G:/output') if (
 #         (('%s_attack_%s_testidx-%s_trainidx-' % (full_model.model_name, loss_type, test_description)) in filename) and        
 #         (filename.endswith('stepsize-%s_proj_final.npz' % step_size)))]
 #         # and (('stepsize-%s_proj_final.npz' % step_size) in filename))] # Check all step sizes        
@@ -217,8 +217,8 @@ orig_Y_train = np.copy(data_sets.train.labels)
 #             test_description=test_description,
 #             force_refresh=True)
 #     copyfile(
-#         'output/%s-cg-normal_loss-test-%s.npz' % (top_model_name, test_description),
-#         'output/%s-cg-normal_loss-test-%s.npz' % (full_model_name, test_description))
+#         'G:/output/%s-cg-normal_loss-test-%s.npz' % (top_model_name, test_description),
+#         'G:/output/%s-cg-normal_loss-test-%s.npz' % (full_model_name, test_description))
 
 #     # Use full model to select indices to poison
 #     with full_graph.as_default():

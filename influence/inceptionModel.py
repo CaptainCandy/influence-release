@@ -39,7 +39,8 @@ class BinaryInceptionModel(GenericNeuralNet):
         self.num_features = 2048 # Hardcoded for inception. For some reason Flatten() doesn't register num_features.
 
         super(BinaryInceptionModel, self).__init__(**kwargs)
-
+        
+        # 如果要用随机权重，把下面这句话注释掉
         self.load_inception_weights()
         # Do we need to set trainable to False?
         # We might be unnecessarily blowing up the graph by including all of the train operations
@@ -155,18 +156,25 @@ class BinaryInceptionModel(GenericNeuralNet):
         #                         TF_WEIGHTS_PATH_NO_TOP,
         #                         cache_subdir='models',
         #                         md5_hash='bcbd6486424b2319ff4ef7d526e38f63')
-        weights_path = 'inception/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5'
+        weights_path = '../inception/inception_v3_weights_tf_dim_ordering_tf_kernels_notop.h5'
+        print('Load weights from disk. no top. ')
         self.inception_model.load_weights(weights_path)
 
 
     def inference(self, input):        
         reshaped_input = tf.reshape(input, [-1, self.img_side, self.img_side, self.num_channels])
-        self.inception_model = InceptionV3(include_top=False, weights='imagenet', input_tensor=reshaped_input)
+        
+        #self.inception_model = InceptionV3(include_top=False, weights='imagenet', input_tensor=reshaped_input)
+        self.inception_model = InceptionV3(include_top=False, weights=None, input_tensor=reshaped_input)
         
         raw_inception_features = self.inception_model.output
-
-        pooled_inception_features = AveragePooling2D((8, 8), strides=(8, 8), name='avg_pool')(raw_inception_features)
-        self.inception_features = Flatten(name='flatten')(pooled_inception_features)
+        print('raw_inception_features=', raw_inception_features)
+        # 下面就进行inception v3网络中的avg_pool平均池化操作，使得上一层的输入8*8*2048变为1*1*2048
+        pooled_inception_features = AveragePooling2D((8, 8), strides=(8, 8), data_format='channels_last', name='avg_pool')(raw_inception_features)
+        print('pooled_inception_features=', pooled_inception_features)
+        #self.inception_features = Flatten(name='flatten')(pooled_inception_features)
+        self.inception_features = tf.reshape(pooled_inception_features, [-1, 2048])
+        print('inception_features=', self.inception_features)
 
 
         with tf.variable_scope('softmax_linear'):
@@ -233,7 +241,7 @@ class BinaryInceptionModel(GenericNeuralNet):
         batch_feed_dict = {}
         batch_feed_dict[K.learning_phase()] = 0
 
-        for i in xrange(num_iter):
+        for i in range(num_iter):
             start = i * batch_size
             end = (i+1) * batch_size
             if end > num_examples:
@@ -265,7 +273,7 @@ class BinaryInceptionModel(GenericNeuralNet):
             print('Using model minus one')
             model = self.sklearn_model_minus_one
         else:
-            raise ValueError, "feed_dict has incorrect number of training examples"
+            raise ValueError("feed_dict has incorrect number of training examples")
 
         model.fit(X_train, Y_train)
         # sklearn returns coefficients in shape num_classes x num_features

@@ -50,7 +50,7 @@ with full_graph.as_default():
         keep_probs=keep_probs,
         decay_epochs=decay_epochs,
         mini_batch=True,
-        train_dir='output',
+        train_dir='G:/output',
         log_dir='log',
         model_name=full_model_name)
 

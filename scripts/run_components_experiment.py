@@ -63,8 +63,8 @@ tf_model = BinaryLogisticRegressionWithLBFGS(
     keep_probs=keep_probs,
     decay_epochs=decay_epochs,
     mini_batch=False,
-    train_dir='output',
-    log_dir='log',
+    train_dir='G:/output',
+    log_dir='G:/log',
     model_name='mnist-17_logreg')
 
 tf_model.train()
@@ -108,7 +108,7 @@ test_image = tf_model.data_sets.test.x[test_idx, :]
 train_idx = np.where(~flipped_idx)[0][np.argsort(influences[~flipped_idx])[4]]
 harmful_train_image = tf_model.data_sets.train.x[train_idx, :]
 
-np.savez('output/components_results',
+np.savez('G:/output/components_results',
     influences=influences,
     influences_without_train_error=influences_without_train_error,
     influences_without_hessian=influences_without_hessian,

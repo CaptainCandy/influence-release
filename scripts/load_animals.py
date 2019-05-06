@@ -8,10 +8,12 @@ from subprocess import call
 
 from keras.preprocessing import image
 
+import sys
+sys.path.append("C:/Tang/influence-release-master")  #设置自定义包的搜索路径
 from influence.dataset import DataSet
 from influence.inception_v3 import preprocess_input
 
-BASE_DIR = 'data' # TODO: change
+BASE_DIR = 'C:/Tang/data/dog_fish/' # TODO: change
 
 def fill(X, Y, idx, label, img_path, img_side):
     img = image.load_img(img_path, target_size=(img_side, img_side))
@@ -38,7 +40,7 @@ def extract_and_rename_animals():
     for class_string, class_id in class_maps:
         
         class_dir = os.path.join(BASE_DIR, class_string)
-        print(class_dir)
+        print('class_dir = ' + class_dir)
         call('mkdir %s' % class_dir, shell=True)
         call('tar -xf %s.tar -C %s' % (os.path.join(BASE_DIR, class_id), class_dir), shell=True)
         
@@ -63,7 +65,7 @@ def load_animals(num_train_ex_per_class=300,
     if num_valid_ex_per_class == 0:
         valid_str = ''
     else:
-        valid_str = '_valid-%s' % num_valid_examples
+        valid_str = '_valid-%s' % 'num_valid_examples' #TODO: 解决valid example的问题
 
     if classes is None:
         classes = ['dog', 'cat', 'bird', 'fish', 'horse', 'monkey', 'zebra', 'panda', 'lemur', 'wombat']
